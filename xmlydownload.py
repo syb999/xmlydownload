@@ -38,8 +38,8 @@ def click_on_image(template_path, threshold=0.8):
 	return False
 
 def doubleclick_on_image(template_path, threshold=0.8):
-	global position, height
-	global height
+	global position, height, count
+
 	if position == None:
 		position = find_image_on_screen(template_path, threshold)
 	else:
@@ -49,7 +49,7 @@ def doubleclick_on_image(template_path, threshold=0.8):
 			else:
 				position = (position[0], position[1])
 		else:
-			if count < 24:
+			if count < 22:
 				position = (position[0], position[1] + y_step)
 			else:
 				position = (position[0], position[1])
@@ -62,7 +62,9 @@ def doubleclick_on_image(template_path, threshold=0.8):
 	return False
 
 def main_script(nums):
-	global count
+	global count, height
+	height = pyautogui.size().height
+	count = 0
 
 	while count < nums:
 		time.sleep(1)
@@ -79,6 +81,10 @@ def main_script(nums):
 					pyautogui.hotkey('ctrl', 'w')
 					time.sleep(1)
 					click_on_image("./png/next.png")
+					time.sleep(2)
+			else:
+				count -= 1
+				if click_on_image("./png/next.png"):
 					time.sleep(2)
 		elif click_on_image("./png/wait.png"):
 			click_on_image("./png/next.png")
@@ -103,8 +109,6 @@ while True:
 	if event == sg.WIN_CLOSED or event == "关闭":
 		break
 	elif event == "运行":
-		count = 0
-		height = pyautogui.size().height
 		time.sleep(2)
 
 		try:
