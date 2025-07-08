@@ -38,19 +38,26 @@ def click_on_image(template_path, threshold=0.8):
 	return False
 
 def doubleclick_on_image(template_path, threshold=0.8):
-	global position, height, count
+	global position, height, count, latest_count
 
 	if position == None:
 		position = find_image_on_screen(template_path, threshold)
 	else:
 		if height == 768:
 			if count < 18:
-				position = (position[0], position[1] + y_step)
+				if latest_count == count:
+					position = (position[0], position[1] + y_step)
+				else:
+					count = latest_count
 			else:
 				position = (position[0], position[1])
 		else:
-			if count < 22:
-				position = (position[0], position[1] + y_step)
+			if count < 23:
+				if latest_count == count:
+					position = (position[0], position[1] + y_step)
+				else:
+					count = latest_count
+					position = (position[0], position[1])
 			else:
 				position = (position[0], position[1])
 	if position:
@@ -62,9 +69,10 @@ def doubleclick_on_image(template_path, threshold=0.8):
 	return False
 
 def main_script(nums):
-	global count, height
+	global count, height, latest_count
 	height = pyautogui.size().height
 	count = 0
+	latest_count = 0
 
 	while count < nums:
 		time.sleep(1)
@@ -72,23 +80,20 @@ def main_script(nums):
 		if click_on_image("./png/pop.png"):
 			if click_on_image("./png/x.png"):
 				time.sleep(1)
+		elif click_on_image("./png/wait.png"):
+			click_on_image("./png/next.png")
+			time.sleep(2)
 		elif doubleclick_on_image("./png/play.png"):
 			count += 1
 			time.sleep(1)
 			if click_on_image("./png/menu.png"):
+				latest_count += 1
 				if click_on_image("./png/dl.png"):
 					time.sleep(1)
 					pyautogui.hotkey('ctrl', 'w')
 					time.sleep(1)
 					click_on_image("./png/next.png")
 					time.sleep(2)
-			else:
-				count -= 1
-				if click_on_image("./png/next.png"):
-					time.sleep(2)
-		elif click_on_image("./png/wait.png"):
-			click_on_image("./png/next.png")
-			time.sleep(2)
 		elif click_on_image("./png/next.png"):
 			time.sleep(2)
 		else:
